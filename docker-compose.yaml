@@ -1,0 +1,32 @@
+version: "3.3"
+services:
+  master:
+    image: eeacms/jenkins-master
+    ports:
+    - "80:8080"
+    environment:
+    - JAVA_OPTS=-Xmx2048m
+      #command: "chmod 777 /var/run/docker.sock"
+    volumes:
+    - jenkins-master:/var/jenkins_home
+    - /usr/bin/docker:/usr/bin/docker
+    - /var/run/docker.sock:/var/run/docker.sock
+
+  worker:
+    image: eeacms/jenkins-slave
+    environment:
+      JAVA_OPTS: "-Xmx2048m"
+      JENKINS_MASTER: "http://master:8080"
+      JENKINS_NAME: "worker"
+      JENKINS_USER: "jenkins"
+      JENKINS_PASS: "jenkins"
+      JENKINS_RETRY: "10"
+      #command: bash -c "chmod 777 /var/run/docker.sock"
+    volumes:
+    - jenkins-worker:/var/jenkins_home/worker
+    - /usr/bin/docker:/usr/bin/docker
+    - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  jenkins-master:
+  jenkins-worker:

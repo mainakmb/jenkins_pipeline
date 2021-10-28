@@ -5,7 +5,9 @@ pipeline {
     environment{
         dockerImage =''
         registry = 'mainakmb/pythonapp'
+        registryCredential = 'dockerhub'
     }
+    
     stages {
         stage('Checkout'){
         steps {
@@ -17,6 +19,16 @@ pipeline {
             steps{
                 script {
                     dockerImage = docker.build registry
+                }
+            }
+        }
+        
+        stage("Push Docker Image"){
+            steps{
+                script{
+                    docker.withRegistry( '', registryCredential){
+                    dockerImage.push()
+                    }
                 }
             }
         }
